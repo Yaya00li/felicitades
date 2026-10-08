@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>¡Felicidades!</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Georgia, "Times New Roman", serif;
+    background: linear-gradient(135deg, #ff9a9e, #fad0c4, #fbc2eb, #a6c1ee);
+    background-size: 300% 300%;
+    animation: fondo 12s ease infinite;
+    text-align: center;
+    padding: 20px;
+  }
+  @keyframes fondo {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .tarjeta {
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 24px;
+    padding: 40px 28px;
+    max-width: 480px;
+    width: 100%;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    position: relative;
+    z-index: 2;
+  }
+  .emoji { font-size: 64px; animation: salto 1.5s ease infinite; }
+  @keyframes salto {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+  h1 { font-size: 2.2rem; color: #c2185b; margin: 12px 0; }
+  p { font-size: 1.15rem; color: #444; line-height: 1.6; margin-bottom: 24px; }
+  button {
+    font-size: 1.05rem;
+    padding: 12px 28px;
+    border: none;
+    border-radius: 999px;
+    background: #c2185b;
+    color: white;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  button:active { transform: scale(0.96); }
+  canvas { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
+</style>
+</head>
+<body>
+  <canvas id="confeti"></canvas>
+  <div class="tarjeta">
+    <div class="emoji">🎉</div>
+    <h1>¡Felicidades, NOMBRE!</h1>
+    <p>Escribe aquí tu mensaje. Gracias por existir y hacer mejor la vida de quienes te rodean. ¡Que este día esté lleno de alegría!</p>
+    <button onclick="lanzar()">¡Toca para celebrar! 🎈</button>
+  </div>
+
+<script>
+  const canvas = document.getElementById("confeti");
+  const ctx = canvas.getContext("2d");
+  let piezas = [];
+
+  function ajustar() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  ajustar();
+  window.addEventListener("resize", ajustar);
+
+  function lanzar() {
+    const colores = ["#e91e63", "#ffeb3b", "#03a9f4", "#4caf50", "#ff9800", "#9c27b0"];
+    for (let i = 0; i < 150; i++) {
+      piezas.push({
+        x: Math.random() * canvas.width,
+        y: -20,
+        w: 6 + Math.random() * 6,
+        h: 10 + Math.random() * 8,
+        vy: 2 + Math.random() * 4,
+        vx: -2 + Math.random() * 4,
+        color: colores[Math.floor(Math.random() * colores.length)],
+        rot: Math.random() * 360
+      });
+    }
+  }
+
+  function animar() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    piezas.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rot += 5;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot * Math.PI / 180);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.restore();
+    });
+    piezas = piezas.filter(p => p.y < canvas.height + 20);
+    requestAnimationFrame(animar);
+  }
+  animar();
+  window.onload = lanzar;
+</script>
+</body>
+</html>
